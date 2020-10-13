@@ -17,31 +17,40 @@ import ktx.ashley.allOf
 import ktx.ashley.get
 import ktx.graphics.use
 
-class RenderSystem(private val batch: Batch, private val viewport: ExtendViewport, map: Map) : SortedIteratingSystem (
+class RenderSystem(private val batch: Batch, private val camera: OrthographicCamera, map: Map) : SortedIteratingSystem (
         allOf(TransformComponent::class, TextureComponent::class).get(),
         compareBy { it[TextureComponent.mapper]?.zIndex }
 ) {
-    private val mapRenderer: OrthogonalTiledMapRenderer = OrthogonalTiledMapRenderer(map as TiledMap?, Game.unitScale, batch).apply { setView(viewport.camera as OrthographicCamera) }
+    private val mapRenderer: OrthogonalTiledMapRenderer = OrthogonalTiledMapRenderer(map as TiledMap?, 1f, batch)
     private val entityLayer = map.layers.getIndex("entities")
     private val bgLayers = (0 until entityLayer).toList().toIntArray()
     private val fgLayers = ((entityLayer + 1) until map.layers.size()).toList().toIntArray()
 
     override fun update(deltaTime: Float) {
+        batch.projectionMatrix = camera.combined
+        camera.zoom = 8f
+        camera.update()
+        mapRenderer.setView(camera)
+
         mapRenderer.render(bgLayers)
-        batch.projectionMatrix = viewport.camera.combined
+
         batch.use {
             super.update(deltaTime)
         }
+
         mapRenderer.render(fgLayers)
     }
 
     override fun processEntity(entity: Entity, deltaTime: Float) {
         entity[TransformComponent.mapper]?.let { transform ->
             entity[TextureComponent.mapper]?.let { texture ->
-                batch.draw(texture.texture, transform.bounds.x * (Game.pixelSize / Game.virtualWidth),
-                        transform.bounds.y * (Game.pixelSize / Game.virtualHeight),
-                        texture.texture.regionWidth.toFloat() * (Game.pixelSize / Game.virtualWidth),
-                        texture.texture.regionHeight.toFloat() * (Game.pixelSize / Game.virtualWidth))
+                batch.draw(
+                        texture.texture,
+                        transform.bounds.x,
+                        transform.bounds.y,
+                        texture.texture.regionWidth.toFloat(),
+                        texture.texture.regionHeight.toFloat()
+                )
             }
         }
     }

@@ -18,22 +18,21 @@ class LoadingScreen(private val game: Game,
                     private val batch: Batch,
                     private val font: BitmapFont,
                     private val assets: AssetManager,
-                    private val viewport: ExtendViewport
+                    private val camera: OrthographicCamera
 ) : KtxScreen {
-    override fun resize(width: Int, height: Int) {
-        viewport.update(width, height)
-    }
 
     override fun show() {
         MapAssets.values().forEach { assets.load(it) }
         TextureAtlasAssets.values().forEach { assets.load(it) }
+        camera.position.set(Game.width / 2, Game.height / 2, 0f)
+        camera.update()
     }
 
     override fun render(delta: Float) {
         assets.update()
 
         batch.use {
-            font.draw(batch, "Loading...", Game.windowWidth/2f, Game.windowHeight/2f)
+            font.draw(batch, "Loading...", 0f, 0f)
         }
 
         if (assets.isFinished) {

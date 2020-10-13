@@ -9,8 +9,8 @@ object DesktopLauncher {
     @JvmStatic
     fun main(arg: Array<String>) {
         val config = LwjglApplicationConfiguration().apply {
-            width = Game.windowWidth
-            height = Game.windowHeight
+            width = 800
+            height = 600
             title = "Untitled RPG Game"
             resizable = true
         }

@@ -28,8 +28,8 @@ class PhysicsSystem(private val world: World) : IteratingSystem(
                 val transform = TransformComponent.mapper[it]
                 val body = BodyComponent.mapper[it]
                 val pos = body.body.position
-                transform.bounds.x = pos.x
-                transform.bounds.y = pos.y
+                transform.bounds.x = pos.x - transform.bounds.width / 2
+                transform.bounds.y = pos.y - transform.bounds.height / 2
             }
         }
         bodiesQueue.clear()

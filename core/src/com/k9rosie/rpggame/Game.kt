@@ -1,6 +1,7 @@
 package com.k9rosie.rpggame
 
 import com.badlogic.ashley.core.PooledEngine
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver
@@ -23,12 +24,9 @@ import ktx.inject.register
 
 class Game : KtxGame<KtxScreen>() {
     companion object {
-        const val windowWidth = 800
-        const val windowHeight = 800
-        const val virtualWidth = 10f
-        const val virtualHeight = 10f
-        const val pixelSize = 16f
-        const val unitScale = 1 / pixelSize
+        val height = 20f
+        val ppu = 600 / height
+        val width = 800 / ppu
     }
     private val ctx = Context()
 
@@ -40,9 +38,9 @@ class Game : KtxGame<KtxScreen>() {
             bindSingleton(AssetManager().apply {
                 setLoader(TiledMap::class.java, TmxMapLoader(InternalFileHandleResolver()))
             })
-            bindSingleton(ExtendViewport(virtualWidth, virtualHeight))
+            bindSingleton(OrthographicCamera(width, height))
             bindSingleton(PooledEngine())
-            bindSingleton(World(Vector2(0f, -9.8f), true))
+            bindSingleton(World(Vector2(0f, 0f), true))
 
             addScreen(LoadingScreen(inject(), inject(), inject(), inject(), inject()))
             addScreen(GameScreen(inject(), inject(), inject(), inject(), inject()))
