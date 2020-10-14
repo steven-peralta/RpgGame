@@ -31,6 +31,8 @@ class Game : KtxGame<KtxScreen>() {
     private val ctx = Context()
 
     override fun create() {
+        val inputQueue = InputQueue()
+        Gdx.input.inputProcessor = inputQueue
         ctx.register {
             bindSingleton(this@Game)
             bindSingleton<Batch>(SpriteBatch())
@@ -38,12 +40,13 @@ class Game : KtxGame<KtxScreen>() {
             bindSingleton(AssetManager().apply {
                 setLoader(TiledMap::class.java, TmxMapLoader(InternalFileHandleResolver()))
             })
+            bindSingleton(inputQueue)
             bindSingleton(OrthographicCamera(width, height))
             bindSingleton(PooledEngine())
             bindSingleton(World(Vector2(0f, 0f), true))
 
             addScreen(LoadingScreen(inject(), inject(), inject(), inject(), inject()))
-            addScreen(GameScreen(inject(), inject(), inject(), inject(), inject()))
+            addScreen(GameScreen(inject(), inject(), inject(), inject(), inject(), inject()))
         }
 
         setScreen<LoadingScreen>()

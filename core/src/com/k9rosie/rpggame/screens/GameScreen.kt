@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.FixtureDef
 import com.badlogic.gdx.physics.box2d.PolygonShape
 import com.badlogic.gdx.physics.box2d.World
+import com.k9rosie.rpggame.InputQueue
 import com.k9rosie.rpggame.assets.MapAssets
 import com.k9rosie.rpggame.assets.TextureAtlasAssets
 import com.k9rosie.rpggame.assets.get
@@ -26,7 +27,8 @@ class GameScreen(private val batch: Batch,
                  private val camera: OrthographicCamera,
                  private val engine: PooledEngine,
                  private val assets: AssetManager,
-                 private val world: World
+                 private val world: World,
+                 private val input: InputQueue
 ) : KtxScreen {
     private lateinit var map: TiledMap
 
@@ -36,7 +38,7 @@ class GameScreen(private val batch: Batch,
         engine.apply {
             addSystem(CameraSystem(camera))
             addSystem(AnimationSystem())
-            addSystem(PlayerControllerSystem())
+            addSystem(PlayerControllerSystem(input))
             addSystem(AIControllerSystem())
             addSystem(MovementSystem())
             addSystem(RenderSystem(batch, camera, map))
@@ -93,14 +95,14 @@ class GameScreen(private val batch: Batch,
             with<AnimationComponent> {
                 currentAnimation = AnimationStates.IDLE_EAST
                 animations = mapOf(
-                        AnimationStates.IDLE_NORTH to Animation<TextureRegion>(0f, assets[TextureAtlasAssets.Character].findRegion("north_idle")),
-                        AnimationStates.IDLE_EAST to Animation<TextureRegion>(0f, assets[TextureAtlasAssets.Character].findRegion("east_idle")),
-                        AnimationStates.IDLE_WEST to Animation<TextureRegion>(0f, assets[TextureAtlasAssets.Character].findRegion("west_idle")),
-                        AnimationStates.IDLE_SOUTH to Animation<TextureRegion>(0f, assets[TextureAtlasAssets.Character].findRegion("south_idle")),
-                        AnimationStates.WALKING_NORTH to Animation<TextureRegion>(1/8f, assets[TextureAtlasAssets.Character].findRegions("north_running"), Animation.PlayMode.LOOP_PINGPONG),
-                        AnimationStates.WALKING_SOUTH to Animation<TextureRegion>(1/8f, assets[TextureAtlasAssets.Character].findRegions("south_running"), Animation.PlayMode.LOOP_PINGPONG),
-                        AnimationStates.WALKING_EAST to Animation<TextureRegion>(1/8f, assets[TextureAtlasAssets.Character].findRegions("east_running"), Animation.PlayMode.LOOP_PINGPONG),
-                        AnimationStates.WALKING_WEST to Animation<TextureRegion>(1/8f, assets[TextureAtlasAssets.Character].findRegions("west_running"), Animation.PlayMode.LOOP_PINGPONG)
+                        AnimationStates.IDLE_NORTH to Pair(Animation<TextureRegion>(0f, assets[TextureAtlasAssets.Character].findRegion("north_idle")), AnimationStates.IDLE_NORTH),
+                        AnimationStates.IDLE_EAST to Pair(Animation<TextureRegion>(0f, assets[TextureAtlasAssets.Character].findRegion("east_idle")), AnimationStates.IDLE_EAST),
+                        AnimationStates.IDLE_WEST to Pair(Animation<TextureRegion>(0f, assets[TextureAtlasAssets.Character].findRegion("west_idle")), AnimationStates.IDLE_WEST),
+                        AnimationStates.IDLE_SOUTH to Pair(Animation<TextureRegion>(0f, assets[TextureAtlasAssets.Character].findRegion("south_idle")), AnimationStates.IDLE_SOUTH),
+                        AnimationStates.WALKING_NORTH to Pair(Animation<TextureRegion>(1/8f, assets[TextureAtlasAssets.Character].findRegions("north_running"), Animation.PlayMode.LOOP_PINGPONG), AnimationStates.IDLE_NORTH),
+                        AnimationStates.WALKING_SOUTH to Pair(Animation<TextureRegion>(1/8f, assets[TextureAtlasAssets.Character].findRegions("south_running"), Animation.PlayMode.LOOP_PINGPONG), AnimationStates.IDLE_SOUTH),
+                        AnimationStates.WALKING_EAST to Pair(Animation<TextureRegion>(1/8f, assets[TextureAtlasAssets.Character].findRegions("east_running"), Animation.PlayMode.LOOP_PINGPONG), AnimationStates.IDLE_EAST),
+                        AnimationStates.WALKING_WEST to Pair(Animation<TextureRegion>(1/8f, assets[TextureAtlasAssets.Character].findRegions("west_running"), Animation.PlayMode.LOOP_PINGPONG), AnimationStates.IDLE_WEST)
                 )
             }
         }
@@ -132,14 +134,14 @@ class GameScreen(private val batch: Batch,
             with<AnimationComponent> {
                 currentAnimation = AnimationStates.IDLE_WEST
                 animations = mapOf(
-                        AnimationStates.IDLE_NORTH to Animation<TextureRegion>(0f, assets[TextureAtlasAssets.Character].findRegion("north_idle")),
-                        AnimationStates.IDLE_EAST to Animation<TextureRegion>(0f, assets[TextureAtlasAssets.Character].findRegion("east_idle")),
-                        AnimationStates.IDLE_WEST to Animation<TextureRegion>(0f, assets[TextureAtlasAssets.Character].findRegion("west_idle")),
-                        AnimationStates.IDLE_SOUTH to Animation<TextureRegion>(0f, assets[TextureAtlasAssets.Character].findRegion("south_idle")),
-                        AnimationStates.WALKING_NORTH to Animation<TextureRegion>(1/8f, assets[TextureAtlasAssets.Character].findRegions("north_running"), Animation.PlayMode.LOOP_PINGPONG),
-                        AnimationStates.WALKING_SOUTH to Animation<TextureRegion>(1/8f, assets[TextureAtlasAssets.Character].findRegions("south_running"), Animation.PlayMode.LOOP_PINGPONG),
-                        AnimationStates.WALKING_EAST to Animation<TextureRegion>(1/8f, assets[TextureAtlasAssets.Character].findRegions("east_running"), Animation.PlayMode.LOOP_PINGPONG),
-                        AnimationStates.WALKING_WEST to Animation<TextureRegion>(1/8f, assets[TextureAtlasAssets.Character].findRegions("west_running"), Animation.PlayMode.LOOP_PINGPONG)
+                        AnimationStates.IDLE_NORTH to Pair(Animation<TextureRegion>(0f, assets[TextureAtlasAssets.Character].findRegion("north_idle")), AnimationStates.IDLE_NORTH),
+                        AnimationStates.IDLE_EAST to Pair(Animation<TextureRegion>(0f, assets[TextureAtlasAssets.Character].findRegion("east_idle")), AnimationStates.IDLE_EAST),
+                        AnimationStates.IDLE_WEST to Pair(Animation<TextureRegion>(0f, assets[TextureAtlasAssets.Character].findRegion("west_idle")), AnimationStates.IDLE_WEST),
+                        AnimationStates.IDLE_SOUTH to Pair(Animation<TextureRegion>(0f, assets[TextureAtlasAssets.Character].findRegion("south_idle")), AnimationStates.IDLE_SOUTH),
+                        AnimationStates.WALKING_NORTH to Pair(Animation<TextureRegion>(1/8f, assets[TextureAtlasAssets.Character].findRegions("north_running"), Animation.PlayMode.LOOP_PINGPONG), AnimationStates.IDLE_NORTH),
+                        AnimationStates.WALKING_SOUTH to Pair(Animation<TextureRegion>(1/8f, assets[TextureAtlasAssets.Character].findRegions("south_running"), Animation.PlayMode.LOOP_PINGPONG), AnimationStates.IDLE_SOUTH),
+                        AnimationStates.WALKING_EAST to Pair(Animation<TextureRegion>(1/8f, assets[TextureAtlasAssets.Character].findRegions("east_running"), Animation.PlayMode.LOOP_PINGPONG), AnimationStates.IDLE_EAST),
+                        AnimationStates.WALKING_WEST to Pair(Animation<TextureRegion>(1/8f, assets[TextureAtlasAssets.Character].findRegions("west_running"), Animation.PlayMode.LOOP_PINGPONG), AnimationStates.IDLE_WEST)
                 )
             }
         }

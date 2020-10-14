@@ -12,7 +12,6 @@ object DesktopLauncher {
             width = 800
             height = 600
             title = "Untitled RPG Game"
-            resizable = true
         }
         LwjglApplication(Game(), config).logLevel = Application.LOG_ERROR
     }

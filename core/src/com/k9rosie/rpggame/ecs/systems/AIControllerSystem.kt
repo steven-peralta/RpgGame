@@ -14,13 +14,7 @@ class AIControllerSystem : IteratingSystem(
 ){
     override fun processEntity(entity: Entity, deltaTime: Float) {
         entity[ActionComponent.mapper]?.let { action ->
-            when (Random.nextInt(0, 5)) {
-                0 -> action.action = Actions.MOVE_UP
-                1 -> action.action = Actions.MOVE_DOWN
-                2 -> action.action = Actions.MOVE_LEFT
-                3 -> action.action = Actions.MOVE_RIGHT
-                4 -> action.action = Actions.NOTHING
-            }
+
         }
 
     }

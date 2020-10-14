@@ -19,11 +19,26 @@ class MovementSystem : IteratingSystem(
             entity[BodyComponent.mapper]?.let { body ->
                 entity[AnimationComponent.mapper]?.let { animation ->
                     when (action.action) {
-                        Actions.NOTHING -> { body.body.setLinearVelocity(0f, 0f) }
-                        Actions.MOVE_LEFT -> { body.body.setLinearVelocity(-100f, 0f); animation.currentAnimation = AnimationStates.WALKING_WEST }
-                        Actions.MOVE_RIGHT -> { body.body.setLinearVelocity(100f, 0f); animation.currentAnimation = AnimationStates.WALKING_EAST }
-                        Actions.MOVE_DOWN -> { body.body.setLinearVelocity(0f, -100f); animation.currentAnimation = AnimationStates.WALKING_SOUTH }
-                        Actions.MOVE_UP ->  { body.body.setLinearVelocity(0f, 100f); animation.currentAnimation = AnimationStates.WALKING_NORTH }
+                        Actions.NOTHING -> {
+                            body.body.setLinearVelocity(0f, 0f)
+                            animation.currentAnimation = animation.animations[animation.currentAnimation]?.second ?: error("no secondary animation defined")
+                        }
+                        Actions.MOVE_LEFT -> {
+                            body.body.setLinearVelocity(-100f, 0f)
+                            animation.currentAnimation = AnimationStates.WALKING_WEST
+                        }
+                        Actions.MOVE_RIGHT -> {
+                            body.body.setLinearVelocity(100f, 0f)
+                            animation.currentAnimation = AnimationStates.WALKING_EAST
+                        }
+                        Actions.MOVE_DOWN -> {
+                            body.body.setLinearVelocity(0f, -100f)
+                            animation.currentAnimation = AnimationStates.WALKING_SOUTH
+                        }
+                        Actions.MOVE_UP ->  {
+                            body.body.setLinearVelocity(0f, 100f)
+                            animation.currentAnimation = AnimationStates.WALKING_NORTH
+                        }
                     }
                 }
 

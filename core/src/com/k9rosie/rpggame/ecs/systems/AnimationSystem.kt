@@ -15,13 +15,12 @@ class AnimationSystem : IteratingSystem(
         entity[AnimationComponent.mapper]?.let { animation ->
             entity[TextureComponent.mapper]?.let { texture ->
                 if (animation.animations.containsKey(animation.currentAnimation)) {
-                    texture.texture = animation.animations[animation.currentAnimation]?.getKeyFrame(animation.time)
+                    texture.texture = animation.animations[animation.currentAnimation]?.first?.getKeyFrame(animation.time)
                             ?: error("current animation isn't defined in animations list")
-                }
+                    animation.time += deltaTime
 
-                animation.time += deltaTime
+                }
             }
         }
     }
-
 }
