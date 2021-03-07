@@ -12,17 +12,17 @@ import com.k9rosie.rpggame.ecs.components.TransformComponent
 import ktx.ashley.allOf
 import ktx.ashley.get
 
-class CameraSystem(private val camera: OrthographicCamera) : IteratingSystem(
+class CameraSystem(private val viewport: ExtendViewport) : IteratingSystem(
         allOf(CameraLockedComponent::class, TransformComponent::class).get()
 ) {
     override fun update(deltaTime: Float) {
         super.update(deltaTime)
-        camera.update()
+        viewport.camera.update()
     }
     override fun processEntity(entity: Entity, deltaTime: Float) {
         entity[TransformComponent.mapper]?.let { transform ->
-            camera.position.x = transform.bounds.x
-            camera.position.y = transform.bounds.y
+            viewport.camera.position.x = transform.bounds.x
+            viewport.camera.position.y = transform.bounds.y
         }
     }
 }

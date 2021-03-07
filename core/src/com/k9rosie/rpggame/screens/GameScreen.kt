@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.FixtureDef
 import com.badlogic.gdx.physics.box2d.PolygonShape
 import com.badlogic.gdx.physics.box2d.World
+import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.k9rosie.rpggame.InputQueue
 import com.k9rosie.rpggame.assets.MapAssets
 import com.k9rosie.rpggame.assets.TextureAtlasAssets
@@ -24,7 +25,7 @@ import ktx.ashley.entity
 import ktx.ashley.with
 
 class GameScreen(private val batch: Batch,
-                 private val camera: OrthographicCamera,
+                 private val viewport: ExtendViewport,
                  private val engine: PooledEngine,
                  private val assets: AssetManager,
                  private val world: World,
@@ -36,12 +37,12 @@ class GameScreen(private val batch: Batch,
 
         map = assets[MapAssets.TestMap]
         engine.apply {
-            addSystem(CameraSystem(camera))
+            addSystem(CameraSystem(viewport))
             addSystem(AnimationSystem())
             addSystem(PlayerControllerSystem(input))
             addSystem(AIControllerSystem())
             addSystem(MovementSystem())
-            addSystem(RenderSystem(batch, camera, map))
+            addSystem(RenderSystem(batch, viewport, map))
             addSystem(PhysicsSystem(world))
         }
 

@@ -17,7 +17,7 @@ import ktx.ashley.allOf
 import ktx.ashley.get
 import ktx.graphics.use
 
-class RenderSystem(private val batch: Batch, private val camera: OrthographicCamera, map: Map) : SortedIteratingSystem (
+class RenderSystem(private val batch: Batch, private val viewport: ExtendViewport, map: Map) : SortedIteratingSystem (
         allOf(TransformComponent::class, TextureComponent::class).get(),
         compareBy { it[TextureComponent.mapper]?.zIndex }
 ) {
@@ -27,10 +27,9 @@ class RenderSystem(private val batch: Batch, private val camera: OrthographicCam
     private val fgLayers = ((entityLayer + 1) until map.layers.size()).toList().toIntArray()
 
     override fun update(deltaTime: Float) {
-        batch.projectionMatrix = camera.combined
-        camera.zoom = 8f
-        camera.update()
-        mapRenderer.setView(camera)
+        batch.projectionMatrix = viewport.camera.combined
+        viewport.camera.update()
+        mapRenderer.setView(viewport.camera as OrthographicCamera)
 
         mapRenderer.render(bgLayers)
 
