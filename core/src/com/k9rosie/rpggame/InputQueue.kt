@@ -34,7 +34,7 @@ class InputQueue : InputProcessor {
         return true
     }
 
-    override fun scrolled(amount: Int): Boolean {
+    override fun scrolled(amountX: Float, amountY: Float): Boolean {
         return true
     }
 }
